@@ -3,313 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sweet Voice Planner</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Alien Voice Command</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6c5ce7;
-            --accent: #ff85a2;
-            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            --glass-bg: rgba(255, 255, 255, 0.9);
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --space: #050510;
+            --ufo-green: #00ff88;
+            --portal-purple: #6c5ce7;
+            --alien-pink: #ff85a2;
         }
 
+        /* Essential fix for "fitting" boxes */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-grad);
-            background-attachment: fixed;
+            font-family: 'Outfit', sans-serif;
+            background: var(--space);
             margin: 0;
-            padding: 20px 15px; /* Reduced padding for mobile */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 15px;
+            color: white;
             min-height: 100vh;
-            color: #2d3436;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at center, #1a1a3a 0%, #050510 100%);
         }
 
-        h1 {
-            color: white;
-            font-size: 1.8rem; /* Scaled down for mobile */
-            text-shadow: 2px 4px 10px rgba(0,0,0,0.1);
-            margin: 10px 0 25px 0;
-            text-align: center;
-        }
-
-        /* Improved Navigation for Mobile: Horizontal Scroll */
-        .days-nav {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            width: 100%;
-            padding: 5px 5px 15px 5px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
-        }
-        .days-nav::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
-
-        .day-btn {
-            background: var(--glass-bg);
-            border: 2px solid transparent;
-            padding: 10px 18px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--primary);
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            box-shadow: var(--card-shadow);
-        }
-
-        .day-btn.active {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        /* --- ROCKET LAUNCH LOADER --- */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--space);
+            z-index: 2000;
             display: none;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        @keyframes popIn {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+        .rocket { font-size: 5rem; animation: shake 0.1s infinite; }
+        .fire { width: 20px; height: 50px; background: linear-gradient(to bottom, #ff4500, transparent); margin-top: -10px; animation: flicker 0.1s infinite; }
 
-        .section-label {
-            font-size: 0.75rem;
-            color: #a2a2a2;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 15px 0 10px 0;
-            display: block;
-        }
+        @keyframes shake { 0% { transform: translate(2px, 1px); } 50% { transform: translate(-2px, -1px); } 100% { transform: translate(1px, -1px); } }
+        @keyframes flicker { from { opacity: 1; } to { opacity: 0.6; } }
 
-        /* Better Task Row for small screens */
-        .task-row {
+        /* --- ALIEN GRID --- */
+        .alien-grid {
             display: grid;
-            grid-template-columns: 1fr auto auto;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 1000px;
+            margin: 10px auto;
+        }
+
+        @media (min-width: 768px) { .alien-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .alien-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .alien-emoji { font-size: 3rem; display: block; margin-bottom: 8px; animation: bounce 2s ease-in-out infinite; }
+        .day-label { font-family: 'Bungee', cursive; color: var(--ufo-green); font-size: 0.9rem; }
+
+        /* --- THE FIX: MODAL & TASK ROWS --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 16, 0.98);
+            z-index: 1000;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .modal-content { 
+            width: 100%;
+            max-width: 500px; 
+            margin: 0 auto; 
+        }
+
+        .task-row {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 15px;
+            display: grid;
+            /* Column 1: Flexible Text | Column 2: Exact Time Width | Column 3: Small Delete button */
+            grid-template-columns: 1fr 90px 35px; 
             gap: 8px;
             margin-bottom: 10px;
+            border: 1px solid #2a2a4a;
             align-items: center;
         }
 
-        input {
-            border: 2px solid #eee;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 16px; /* Prevents iOS zoom on focus */
-            outline: none;
-            width: 100%;
+        input { 
+            background: #151525; 
+            border: 1px solid #3a3a5a; 
+            color: white; 
+            padding: 10px; 
+            border-radius: 10px; 
+            font-size: 14px; 
+            width: 100%; /* Important for grid scaling */
+            min-width: 0; /* Prevents input from overflowing grid */
         }
 
+        /* Specific Time Box Adjustment */
         input[type="time"] {
-            padding: 10px 5px;
-            min-width: 100px;
+            padding: 8px 4px;
+            font-size: 13px;
+            text-align: center;
         }
+        
+        .btn { border: none; padding: 15px; border-radius: 15px; font-family: 'Bungee'; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-launch { background: linear-gradient(to right, #ff4500, #ff8c00); color: white; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4); }
+        .btn-intel { background: #2a2a4a; color: white; }
 
-        .btn {
-            border: none;
-            padding: 16px;
-            border-radius: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        .btn-add { background: #eeebff; color: var(--primary); margin-top: 5px; }
-        .btn-save { background: var(--primary); color: white; margin-top: 20px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
-
-        .saved-item {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 5px solid var(--accent);
-        }
-
-        .time-badge {
-            background: #fff0f3;
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .delete-btn { 
-            padding: 10px;
-            color: #ff7675; 
-            font-size: 1.2rem;
-            background: none;
-            border: none;
-        }
     </style>
 </head>
 <body>
 
-<h1>✨ Voice Assistant</h1>
-
-<div class="days-nav" id="navBar">
-    <button class="day-btn" onclick="openDay('Monday')">Monday</button>
-    <button class="day-btn" onclick="openDay('Tuesday')">Tuesday</button>
-    <button class="day-btn" onclick="openDay('Wednesday')">Wednesday</button>
-    <button class="day-btn" onclick="openDay('Thursday')">Thursday</button>
-    <button class="day-btn" onclick="openDay('Friday')">Friday</button>
-    <button class="day-btn" onclick="openDay('Saturday')">Saturday</button>
-    <button class="day-btn" onclick="openDay('Sunday')">Sunday</button>
+<div id="loader">
+    <div id="rocketContainer">
+        <div class="rocket">🚀</div>
+        <center><div class="fire"></div></center>
+    </div>
+    <h2 style="font-family: 'Bungee'; margin-top: 20px; color: var(--ufo-green);">BLASTING OFF...</h2>
 </div>
 
-<div class="container" id="mainContainer">
-    <h2 id="dayLabel" style="color: var(--primary); margin: 0 0 10px 0;"></h2>
-    
-    <span class="section-label">Plan Your Day</span>
-    <div id="inputList"></div>
-    <button class="btn btn-add" onclick="addNewRow()">＋ Add Task</button>
-    
-    <button class="btn btn-save" onclick="saveData()">Save & Sync Voice</button>
+<header style="text-align: center; margin-bottom: 20px;">
+    <h1 style="font-family: 'Bungee'; font-size: 1.8rem; color: var(--ufo-green); margin: 0;">ALIEN COMMS</h1>
+    <p style="color: #666; font-size: 0.7rem; letter-spacing: 1px;">GALACTIC REMINDER SYSTEM</p>
+</header>
 
-    <div id="savedCard">
-        <span class="section-label">Active Schedule</span>
-        <div id="finalDisplay"></div>
+<div class="alien-grid" id="alienGrid"></div>
+
+<div id="editorModal" class="modal">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="modalDayTitle" style="font-family: 'Bungee'; color: var(--portal-purple); margin:0; font-size: 1.2rem;"></h2>
+            <button onclick="closeModal()" style="background:none; border:none; color:white; font-size: 2rem; cursor:pointer;">✕</button>
+        </div>
+        
+        <div id="taskList"></div>
+        
+        <button class="btn btn-intel" onclick="addNewRow()">＋ ADD INTEL</button>
+        <button class="btn btn-launch" onclick="launchSequence()">LAUNCH & SYNC</button>
+        <center>
+            <button onclick="clearDay()" style="background:none; border:none; color:#555; margin-top:20px; font-size:0.7rem;">WIPE FREQUENCY</button>
+        </center>
     </div>
-    
-    <center>
-        <button style="background:none; border:none; color:#bbb; padding: 20px; cursor:pointer; font-size: 0.8rem;" onclick="clearStorage()">CLEAR THIS DAY</button>
-    </center>
 </div>
 
 <script>
-let activeDay = "";
-let timerPool = []; 
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const aliens = ['👽', '👾', '🤖', '🛸', '🐙', '👹', '👺'];
+    let currentEditingDay = "";
+    let synth = window.speechSynthesis;
 
-let synth = window.speechSynthesis;
-let voices = [];
-function loadVoices() {
-    voices = synth.getVoices();
-}
-if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-}
-
-function openDay(day) {
-    activeDay = day;
-    document.getElementById('mainContainer').style.display = 'block';
-    document.getElementById('dayLabel').innerText = day;
-    
-    document.querySelectorAll('.day-btn').forEach(b => {
-        b.classList.toggle('active', b.innerText === day);
-    });
-
-    refreshUI();
-    // Auto-scroll the nav to keep active day visible
-    const btn = document.querySelector(`.day-btn.active`);
-    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-}
-
-function addNewRow(txt = "", tm = "") {
-    const div = document.createElement('div');
-    div.className = 'task-row';
-    div.innerHTML = `
-        <input type="text" class="t-txt" placeholder="Remind me to..." value="${txt}">
-        <input type="time" class="t-tm" value="${tm}">
-        <button class="delete-btn" onclick="this.parentElement.remove()">✕</button>
-    `;
-    document.getElementById('inputList').appendChild(div);
-}
-
-function saveData() {
-    const tasks = [];
-    document.querySelectorAll('.task-row').forEach(row => {
-        const text = row.querySelector('.t-txt').value;
-        const time = row.querySelector('.t-tm').value;
-        if(text && time) tasks.push({ text, time });
-    });
-
-    localStorage.setItem(activeDay, JSON.stringify(tasks));
-    speak("Schedule saved.");
-    refreshUI();
-}
-
-function refreshUI() {
-    const list = document.getElementById('inputList');
-    const display = document.getElementById('finalDisplay');
-    list.innerHTML = "";
-    display.innerHTML = "";
-
-    timerPool.forEach(clearTimeout);
-    timerPool = [];
-
-    const saved = JSON.parse(localStorage.getItem(activeDay)) || [];
-    
-    if(saved.length > 0) {
-        const sorted = [...saved].sort((a,b) => a.time.localeCompare(b.time));
-        saved.forEach(t => addNewRow(t.text, t.time));
-        
-        sorted.forEach(t => {
-            const item = document.createElement('div');
-            item.className = 'saved-item';
-            item.innerHTML = `<span>${t.text}</span><span class="time-badge">🕒 ${t.time}</span>`;
-            display.appendChild(item);
-            setReminder(t);
+    function renderDashboard() {
+        const grid = document.getElementById('alienGrid');
+        grid.innerHTML = '';
+        days.forEach((day, index) => {
+            const data = JSON.parse(localStorage.getItem(day)) || [];
+            const card = document.createElement('div');
+            card.className = `alien-card`;
+            card.onclick = () => openModal(day);
+            card.innerHTML = `
+                <span class="alien-emoji">${aliens[index]}</span>
+                <div class="day-label">${day.substring(0,3)}</div>
+                <div style="font-size:0.6rem; color:#666; margin-top:5px;">${data.length} Signals</div>
+            `;
+            grid.appendChild(card);
         });
-    } else {
-        addNewRow();
-        display.innerHTML = "<p style='color:#ccc; text-align:center;'>No tasks scheduled.</p>";
     }
-}
 
-function setReminder(task) {
-    const [h, m] = task.time.split(':');
-    const alarm = new Date();
-    alarm.setHours(parseInt(h), parseInt(m), 0);
-    
-    const now = new Date();
-    const diff = alarm.getTime() - now.getTime();
-
-    if(diff > 0) {
-        const timer = setTimeout(() => {
-            speak(`Excuse me, it's time to: ${task.text}.`, 2);
-        }, diff);
-        timerPool.push(timer);
+    function openModal(day) {
+        currentEditingDay = day;
+        document.getElementById('modalDayTitle').innerText = day.toUpperCase();
+        document.getElementById('editorModal').style.display = 'block';
+        const list = document.getElementById('taskList');
+        list.innerHTML = '';
+        const saved = JSON.parse(localStorage.getItem(day)) || [];
+        if(saved.length === 0) addNewRow();
+        else saved.forEach(t => addNewRow(t.text, t.time));
     }
-}
 
-function speak(phrase, repeat = 1) {
-    if (synth.speaking) synth.cancel(); 
-    const msg = new SpeechSynthesisUtterance(phrase);
-    const preferred = voices.find(v => v.name.includes("Google") || v.name.includes("Female") || v.name.includes("Samantha"));
-    if (preferred) msg.voice = preferred;
-    msg.pitch = 1.1;
-    msg.rate = 0.95;
-    for(let i=0; i<repeat; i++) { synth.speak(msg); }
-}
-
-function clearStorage() {
-    if(confirm("Wipe this day?")) {
-        localStorage.removeItem(activeDay);
-        refreshUI();
+    function addNewRow(txt = "", tm = "") {
+        const div = document.createElement('div');
+        div.className = 'task-row';
+        div.innerHTML = `
+            <input type="text" class="t-txt" placeholder="Task..." value="${txt}">
+            <input type="time" class="t-tm" value="${tm}">
+            <button style="border:none; background:none; color:var(--alien-pink); font-size:1.2rem; cursor:pointer;" onclick="this.parentElement.remove()">✕</button>
+        `;
+        document.getElementById('taskList').appendChild(div);
     }
-}
 
-document.body.addEventListener('click', () => {
-    if(voices.length === 0) loadVoices();
-}, { once: true });
+    function launchSequence() {
+        const tasks = [];
+        document.querySelectorAll('.task-row').forEach(row => {
+            const text = row.querySelector('.t-txt').value;
+            const time = row.querySelector('.t-tm').value;
+            if(text && time) tasks.push({ text, time });
+        });
+        localStorage.setItem(currentEditingDay, JSON.stringify(tasks));
+
+        const loader = document.getElementById('loader');
+        const rocket = document.getElementById('rocketContainer');
+        loader.style.display = 'flex';
+        
+        setTimeout(() => {
+            rocket.style.transition = 'transform 0.8s ease-in';
+            rocket.style.transform = 'translateY(-120vh)';
+            setTimeout(() => {
+                speak("Transmission successful.");
+                closeModal();
+                renderDashboard();
+                loader.style.display = 'none';
+                rocket.style.transform = 'translateY(0)';
+            }, 800);
+        }, 1200);
+    }
+
+    function closeModal() { document.getElementById('editorModal').style.display = 'none'; }
+
+    function clearDay() {
+        if(confirm("Erase all data for this day?")) {
+            localStorage.removeItem(currentEditingDay);
+            closeModal();
+            renderDashboard();
+        }
+    }
+
+    function speak(phrase) {
+        if (synth.speaking) synth.cancel(); 
+        const msg = new SpeechSynthesisUtterance(phrase);
+        msg.pitch = 1.4;
+        synth.speak(msg);
+    }
+
+    renderDashboard();
 </script>
-
 </body>
 </html>
