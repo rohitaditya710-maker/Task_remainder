@@ -3,313 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sweet Voice Planner</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>AETHER // PRO</title>
     <style>
         :root {
-            --primary: #6c5ce7;
-            --accent: #ff85a2;
-            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            --glass-bg: rgba(255, 255, 255, 0.9);
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --apple-black: #000000;
+            --apple-gray: #1d1d1f;
+            --apple-blue: #0071e3;
+            --apple-text: #f5f5f7;
+            --glass: rgba(255, 255, 255, 0.08);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-grad);
-            background-attachment: fixed;
             margin: 0;
-            padding: 20px 15px; /* Reduced padding for mobile */
+            background: var(--apple-black);
+            color: var(--apple-text);
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            color: #2d3436;
         }
 
-        h1 {
-            color: white;
-            font-size: 1.8rem; /* Scaled down for mobile */
-            text-shadow: 2px 4px 10px rgba(0,0,0,0.1);
-            margin: 10px 0 25px 0;
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at 50% -20%, #2c2c2e 0%, #000 70%);
+        }
+
+        header {
+            padding: 40px 20px 20px;
             text-align: center;
         }
 
-        /* Improved Navigation for Mobile: Horizontal Scroll */
-        .days-nav {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            width: 100%;
-            padding: 5px 5px 15px 5px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
-        }
-        .days-nav::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
-
-        .day-btn {
-            background: var(--glass-bg);
-            border: 2px solid transparent;
-            padding: 10px 18px;
-            border-radius: 15px;
-            cursor: pointer;
+        h1 {
             font-weight: 600;
-            color: var(--primary);
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            box-shadow: var(--card-shadow);
+            font-size: 2.5rem;
+            letter-spacing: -0.05em;
+            margin: 0;
+            background: linear-gradient(180deg, #fff 0%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .day-btn.active {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.05);
+        .day-scroller {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 0;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            display: none;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .section-label {
-            font-size: 0.75rem;
-            color: #a2a2a2;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 15px 0 10px 0;
-            display: block;
-        }
-
-        /* Better Task Row for small screens */
-        .task-row {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 8px;
-            margin-bottom: 10px;
+        .day-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
-        }
-
-        input {
-            border: 2px solid #eee;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 16px; /* Prevents iOS zoom on focus */
-            outline: none;
-            width: 100%;
-        }
-
-        input[type="time"] {
-            padding: 10px 5px;
-            min-width: 100px;
-        }
-
-        .btn {
-            border: none;
-            padding: 16px;
-            border-radius: 15px;
-            font-weight: 700;
+            justify-content: center;
+            background: var(--apple-gray);
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .btn-add { background: #eeebff; color: var(--primary); margin-top: 5px; }
-        .btn-save { background: var(--primary); color: white; margin-top: 20px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
+        .day-pill.active {
+            background: var(--apple-text);
+            color: var(--apple-black);
+            transform: scale(1.15);
+        }
 
-        .saved-item {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
+        /* --- FRAMED INPUT AREA --- */
+        .input-center {
+            padding: 0 25px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .dynamic-box {
+            background: var(--apple-gray);
+            border-radius: 18px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 8px;
+        }
+
+        .dynamic-box:focus-within {
+            background: #2c2c2e;
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.2);
+        }
+
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 4px;
+            font-size: 1rem;
+            flex: 1;
+            outline: none;
+        }
+
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        #timeIn {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 10px;
+            color: var(--apple-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 8px;
+            outline: none;
+            cursor: pointer;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .btn-sync {
+            width: 100%;
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: 18px;
+            background: var(--apple-blue);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-sync:active {
+            transform: scale(0.97);
+            filter: brightness(1.1);
+        }
+
+        .content-area {
+            flex-grow: 1;
+            margin-top: 30px;
+            background: #000;
+            border-radius: 35px 35px 0 0;
+            padding: 25px 20px;
+            overflow-y: auto;
+            box-shadow: 0 -20px 40px rgba(0,0,0,0.5);
+        }
+
+        .entry-card {
+            background: var(--apple-gray);
+            padding: 16px;
+            border-radius: 16px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 5px solid var(--accent);
+            animation: apple-slide 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes apple-slide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .time-badge {
-            background: #fff0f3;
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 10px;
+            color: var(--apple-blue);
             font-size: 0.85rem;
-            font-weight: bold;
+            font-weight: 700;
+            margin-right: 12px;
+            background: rgba(0, 113, 227, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
         }
 
-        .delete-btn { 
-            padding: 10px;
-            color: #ff7675; 
-            font-size: 1.2rem;
-            background: none;
-            border: none;
+        #haptic-pulse {
+            position: fixed; inset: 0; pointer-events: none;
+            background: white; opacity: 0; z-index: 9999;
+            transition: opacity 0.1s;
         }
+
     </style>
 </head>
 <body>
 
-<h1>✨ Voice Assistant</h1>
+<div class="bg-gradient"></div>
+<div id="haptic-pulse"></div>
 
-<div class="days-nav" id="navBar">
-    <button class="day-btn" onclick="openDay('Monday')">Monday</button>
-    <button class="day-btn" onclick="openDay('Tuesday')">Tuesday</button>
-    <button class="day-btn" onclick="openDay('Wednesday')">Wednesday</button>
-    <button class="day-btn" onclick="openDay('Thursday')">Thursday</button>
-    <button class="day-btn" onclick="openDay('Friday')">Friday</button>
-    <button class="day-btn" onclick="openDay('Saturday')">Saturday</button>
-    <button class="day-btn" onclick="openDay('Sunday')">Sunday</button>
-</div>
+<header>
+    <h1>Schedule.</h1>
+</header>
 
-<div class="container" id="mainContainer">
-    <h2 id="dayLabel" style="color: var(--primary); margin: 0 0 10px 0;"></h2>
-    
-    <span class="section-label">Plan Your Day</span>
-    <div id="inputList"></div>
-    <button class="btn btn-add" onclick="addNewRow()">＋ Add Task</button>
-    
-    <button class="btn btn-save" onclick="saveData()">Save & Sync Voice</button>
+<div class="day-scroller" id="dayScroller"></div>
 
-    <div id="savedCard">
-        <span class="section-label">Active Schedule</span>
-        <div id="finalDisplay"></div>
+<div class="input-center">
+    <div class="dynamic-box">
+        <input type="text" id="taskIn" placeholder="Next task..." autocomplete="off">
+        <div class="divider"></div>
+        <input type="time" id="timeIn">
     </div>
-    
-    <center>
-        <button style="background:none; border:none; color:#bbb; padding: 20px; cursor:pointer; font-size: 0.8rem;" onclick="clearStorage()">CLEAR THIS DAY</button>
-    </center>
+    <button class="btn-sync" onclick="hapticSmash()">Add Task</button>
 </div>
+
+<div class="content-area" id="contentArea"></div>
 
 <script>
-let activeDay = "";
-let timerPool = []; 
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    let currentDay = days[new Date().getDay()];
 
-let synth = window.speechSynthesis;
-let voices = [];
-function loadVoices() {
-    voices = synth.getVoices();
-}
-if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-}
+    function init() {
+        // Set default time to current time
+        const now = new Date();
+        const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('timeIn').value = currentTime;
 
-function openDay(day) {
-    activeDay = day;
-    document.getElementById('mainContainer').style.display = 'block';
-    document.getElementById('dayLabel').innerText = day;
-    
-    document.querySelectorAll('.day-btn').forEach(b => {
-        b.classList.toggle('active', b.innerText === day);
-    });
-
-    refreshUI();
-    // Auto-scroll the nav to keep active day visible
-    const btn = document.querySelector(`.day-btn.active`);
-    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-}
-
-function addNewRow(txt = "", tm = "") {
-    const div = document.createElement('div');
-    div.className = 'task-row';
-    div.innerHTML = `
-        <input type="text" class="t-txt" placeholder="Remind me to..." value="${txt}">
-        <input type="time" class="t-tm" value="${tm}">
-        <button class="delete-btn" onclick="this.parentElement.remove()">✕</button>
-    `;
-    document.getElementById('inputList').appendChild(div);
-}
-
-function saveData() {
-    const tasks = [];
-    document.querySelectorAll('.task-row').forEach(row => {
-        const text = row.querySelector('.t-txt').value;
-        const time = row.querySelector('.t-tm').value;
-        if(text && time) tasks.push({ text, time });
-    });
-
-    localStorage.setItem(activeDay, JSON.stringify(tasks));
-    speak("Schedule saved.");
-    refreshUI();
-}
-
-function refreshUI() {
-    const list = document.getElementById('inputList');
-    const display = document.getElementById('finalDisplay');
-    list.innerHTML = "";
-    display.innerHTML = "";
-
-    timerPool.forEach(clearTimeout);
-    timerPool = [];
-
-    const saved = JSON.parse(localStorage.getItem(activeDay)) || [];
-    
-    if(saved.length > 0) {
-        const sorted = [...saved].sort((a,b) => a.time.localeCompare(b.time));
-        saved.forEach(t => addNewRow(t.text, t.time));
-        
-        sorted.forEach(t => {
-            const item = document.createElement('div');
-            item.className = 'saved-item';
-            item.innerHTML = `<span>${t.text}</span><span class="time-badge">🕒 ${t.time}</span>`;
-            display.appendChild(item);
-            setReminder(t);
+        const scroller = document.getElementById('dayScroller');
+        scroller.innerHTML = '';
+        days.forEach(day => {
+            const pill = document.createElement('div');
+            pill.className = `day-pill ${day === currentDay ? 'active' : ''}`;
+            pill.innerText = day;
+            pill.onclick = () => {
+                currentDay = day;
+                init();
+                render();
+            };
+            scroller.appendChild(pill);
         });
-    } else {
-        addNewRow();
-        display.innerHTML = "<p style='color:#ccc; text-align:center;'>No tasks scheduled.</p>";
     }
-}
 
-function setReminder(task) {
-    const [h, m] = task.time.split(':');
-    const alarm = new Date();
-    alarm.setHours(parseInt(h), parseInt(m), 0);
-    
-    const now = new Date();
-    const diff = alarm.getTime() - now.getTime();
+    function render() {
+        const area = document.getElementById('contentArea');
+        area.innerHTML = '';
+        const saved = JSON.parse(localStorage.getItem(currentDay)) || [];
+        
+        // Sort tasks by time
+        saved.sort((a, b) => a.time.localeCompare(b.time));
 
-    if(diff > 0) {
-        const timer = setTimeout(() => {
-            speak(`Excuse me, it's time to: ${task.text}.`, 2);
-        }, diff);
-        timerPool.push(timer);
+        saved.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'entry-card';
+            card.innerHTML = `
+                <div style="display:flex; align-items:center;">
+                    <span class="time-badge">${item.time}</span>
+                    <span style="font-weight:500;">${item.text}</span>
+                </div>
+                <button onclick="remove(${idx})" style="background:none; border:none; color:#ff453a; font-size:1.2rem; cursor:pointer;">✕</button>
+            `;
+            area.appendChild(card);
+        });
     }
-}
 
-function speak(phrase, repeat = 1) {
-    if (synth.speaking) synth.cancel(); 
-    const msg = new SpeechSynthesisUtterance(phrase);
-    const preferred = voices.find(v => v.name.includes("Google") || v.name.includes("Female") || v.name.includes("Samantha"));
-    if (preferred) msg.voice = preferred;
-    msg.pitch = 1.1;
-    msg.rate = 0.95;
-    for(let i=0; i<repeat; i++) { synth.speak(msg); }
-}
+    function hapticSmash() {
+        const txt = document.getElementById('taskIn').value;
+        const tm = document.getElementById('timeIn').value;
+        if(!txt || !tm) return;
 
-function clearStorage() {
-    if(confirm("Wipe this day?")) {
-        localStorage.removeItem(activeDay);
-        refreshUI();
+        let data = JSON.parse(localStorage.getItem(currentDay)) || [];
+        data.push({ text: txt, time: tm });
+        localStorage.setItem(currentDay, JSON.stringify(data));
+
+        // Visual Feedback
+        const pulse = document.getElementById('haptic-pulse');
+        pulse.style.opacity = '0.15';
+        
+        if (window.navigator.vibrate) window.navigator.vibrate(15);
+
+        setTimeout(() => {
+            pulse.style.opacity = '0';
+            document.getElementById('taskIn').value = '';
+            render();
+            speak("Task saved");
+        }, 150);
     }
-}
 
-document.body.addEventListener('click', () => {
-    if(voices.length === 0) loadVoices();
-}, { once: true });
+    function remove(i) {
+        let data = JSON.parse(localStorage.getItem(currentDay));
+        data.splice(i, 1);
+        localStorage.setItem(currentDay, JSON.stringify(data));
+        render();
+    }
+
+    function speak(t) {
+        window.speechSynthesis.cancel();
+        const m = new SpeechSynthesisUtterance(t);
+        m.rate = 1.2;
+        window.speechSynthesis.speak(m);
+    }
+
+    init();
+    render();
 </script>
-
 </body>
 </html>
